@@ -37,31 +37,19 @@ from keras.regularizers import l2
 
 BATCH_SIZE = 32
 VALIDATION_SPLIT = 0.1
-N_CLASSES = 16
+N_CLASSES = 4
 EPOCHS = 7
 
 # Root directory of the project
 ROOT_DIR = os.path.abspath("./")
 
-species = [
-    "blasti",
-    "bonegl",
-    "brhkyt",
-    "cbrtsh",
-    "cmnmyn",
-    "gretit",
-    "hilpig",
-    "himbul",
-    "himgri",
-    "hsparo",
-    "indvul",
-    "jglowl",
-    "lbicrw",
-    "mgprob",
-    "rebimg",
-    "wcrsrt",
+classes = [
+    "fruit",
+    "flower",
+    "both",
+    "ambiguous",
 ]
-species_check = ["hsparo"]
+classes_check = ["fruit"]
 # Import Mask RCNN
 sys.path.append(ROOT_DIR)  # To find local version of the library
 from mrcnn import utils
@@ -198,7 +186,7 @@ get_custom_objects().update({"swish": Activation(swish)})
 
 def build_inceptionV3(
     img_shape=(416, 416, 3),
-    n_classes=16,
+    n_classes=4,
     l2_reg=0.0,
     load_pretrained=True,
     freeze_layers_from="base_model",
@@ -320,15 +308,15 @@ y_pred = []
 y_pred_irv = []
 y_pred_new = []
     
-for i in species:
-    specie = join(image_path, i)
+for i in classes:
+    cls = join(image_path, i)
 
-    files = listdir(specie)
+    files = listdir(cls)
     files.sort(key=lambda f: int("".join(filter(str.isdigit, f))))
 
     for file in files:
 
-        img_path = join(specie, file)
+        img_path = join(cls, file)
         image = cv2.imread(img_path, 1)
 
         result = model_coco.detect([image], verbose=1)
@@ -339,7 +327,7 @@ for i in species:
 
         batches = []
         for j in range(l):
-            if r["class_ids"][j] == 15:
+            if r["class_ids"][j] == 51 or r["class_ids"][j] == 59:
 
                 y1, x1, y2, x2 = r["rois"][j]
 

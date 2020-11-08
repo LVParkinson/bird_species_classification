@@ -3,28 +3,19 @@ from os import listdir, makedirs
 from shutil import move
 import random
 
-species = [
-    "blasti",
-    "bonegl",
-    "brhkyt",
-    "cbrtsh",
-    "cmnmyn",
-    "gretit",
-    "hilpig",
-    "himbul",
-    "himgri",
-    "hsparo",
-    "indvul",
-    "jglowl",
-    "lbicrw",
-    "mgprob",
-    "rebimg",
-    "wcrsrt",
+classes = [
+    "fruit",
+    "flower",
+    "both",
+    "ambiguous",
 ]
 
-train_dir = "./train/"
-validation_dir = "./validation/"
+train_dir = "/home/lindsey/Documents/Git_Projects/bird_species_classification/train/"
+validation_dir = "/home/lindsey/Documents/Git_Projects/bird_species_classification/validation/"
 
+#bird_specie -> classification
+#bird_specie_counter -> classification_counter
+#species -> classes
 
 def create_validation():
     """Validation data sepration from augmented training images.
@@ -34,11 +25,12 @@ def create_validation():
     two if conditions for cases with less than 81 and greater
     than 85. Images are selected using random sampling.
     """
-    for bird_specie in species:
+    for classification in classes:
 
-        train_imgs_path = join(train_dir, bird_specie)
-        if not exists(join(validation_dir, bird_specie)):
-            destination = makedirs(join(validation_dir, bird_specie))
+        train_imgs_path = join(train_dir, classification)
+        #if not exists(join(validation_dir, classification)):
+        destination = join(validation_dir, classification)
+            #destination = makedirs(join(validation_dir, classification))
 
         train_imgs = listdir(train_imgs_path)
         number = len(train_imgs)  # number of images in each category
@@ -62,5 +54,4 @@ def create_validation():
 
 
 if __name__ == "__main__":
-
     create_validation()

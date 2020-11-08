@@ -2,29 +2,20 @@ from os.path import join, exists
 from os import listdir, makedirs
 from shutil import copyfile
 
-species = [
-    "blasti",
-    "bonegl",
-    "brhkyt",
-    "cbrtsh",
-    "cmnmyn",
-    "gretit",
-    "hilpig",
-    "himbul",
-    "himgri",
-    "hsparo",
-    "indvul",
-    "jglowl",
-    "lbicrw",
-    "mgprob",
-    "rebimg",
-    "wcrsrt",
+classes = [
+    "fruit",
+    "flower",
+    "both",
+    "ambiguous",
 ]
 
 
-source_folder = "./train_data/"
-destination_folder = "./train/"
+source_folder = "/home/lindsey/Desktop/Propulsion/Data/Final_Project/brassica_photos/"
+destination_folder = "/home/lindsey/Documents/Git_Projects/bird_species_classification/train/"
 
+#bird_specie -> classification
+#bird_specie_counter -> classification_counter
+#species -> classes
 
 def rename_files():
     """
@@ -37,21 +28,21 @@ def rename_files():
 
     Similarly, for the case if the species counter is greater than 10.
     """
-    bird_specie_counter = 1
+    classification_counter = 1
 
-    for bird_specie in species:
+    for classification in classes:
 
         #
-        source_image_dir = join(source_folder, bird_specie)
+        source_image_dir = join(source_folder, classification)
         print(source_image_dir)
         source_images = listdir(source_image_dir)
         print(source_images)
 
         for source_image in source_images:
 
-            destination = join(destination_folder, bird_specie)
+            destination = join(destination_folder, classification)
             print(destination)
-            if bird_specie_counter < 10:
+            if classification_counter < 10:
 
                 images = 0
                 for source_image in source_images:
@@ -62,7 +53,7 @@ def rename_files():
                             join(
                                 destination,
                                 str(100)
-                                + str(bird_specie_counter)
+                                + str(classification_counter)
                                 + str(0)
                                 + str(images)
                                 + ".jpg",
@@ -75,7 +66,7 @@ def rename_files():
                             join(
                                 destination,
                                 str(100)
-                                + str(bird_specie_counter)
+                                + str(classification_counter)
                                 + str(images)
                                 + ".jpg",
                             ),
@@ -83,7 +74,7 @@ def rename_files():
 
                     images += 1
 
-            elif bird_specie_counter >= 10:
+            elif classification_counter >= 10:
 
                 images = 0
 
@@ -95,7 +86,7 @@ def rename_files():
                             join(
                                 destination,
                                 str(10)
-                                + str(bird_specie_counter)
+                                + str(classification_counter)
                                 + str(0)
                                 + str(images)
                                 + ".jpg",
@@ -108,18 +99,18 @@ def rename_files():
                             join(
                                 destination,
                                 str(10)
-                                + str(bird_specie_counter)
+                                + str(classification_counter)
                                 + str(images)
                                 + ".jpg",
                             ),
                         )
                     images += 1
 
-        bird_specie_counter += 1
+        classification_counter += 1
 
 
 if __name__ == "__main__":
-    for bird_specie in species:
-        if not exists(join(destination_folder, bird_specie)):
-            destination = makedirs(join(destination_folder, bird_specie))
+    for classification in classes:
+        if not exists(join(destination_folder, classification)):
+            destination = makedirs(join(destination_folder, classification))
     rename_files()

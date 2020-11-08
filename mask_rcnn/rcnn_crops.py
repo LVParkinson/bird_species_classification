@@ -10,26 +10,18 @@ import cv2
 from os.path import isfile, join, exists
 from os import rename, listdir, rename, makedirs
 
-# Root directory of the project
-ROOT_DIR = os.path.abspath("../train_images")
+#bird_specie -> classification
+#species -> classes
+#specie -> cls
 
-species = [
-    "blasti",
-    "bonegl",
-    "brhkyt",
-    "cbrtsh",
-    "cmnmyn",
-    "gretit",
-    "hilpig",
-    "himbul",
-    "himgri",
-    "hsparo",
-    "indvul",
-    "jglowl",
-    "lbicrw",
-    "mgprob",
-    "rebimg",
-    "wcrsrt",
+# Root directory of the project
+ROOT_DIR = os.path.abspath("/home/lindsey/Documents/Git_Projects/bird_species_classification/")
+
+classes = [
+    "fruit",
+    "flower",
+    "both",
+    "ambiguous",
 ]
 
 # Import Mask RCNN
@@ -39,7 +31,7 @@ import mrcnn.model as modellib
 from mrcnn import visualize
 
 # Import COCO config
-sys.path.append(os.path.join(ROOT_DIR, "coco/"))  # To find local version
+sys.path.append(os.path.join(ROOT_DIR, "mask_rcnn/coco/"))  # To find local version
 import coco
 
 # Directory to save logs and trained model
@@ -53,7 +45,9 @@ if not os.path.exists(COCO_MODEL_PATH):
     utils.download_trained_weights(COCO_MODEL_PATH)
 
 # Directory of images to run detection on
-IMAGE_DIR = os.path.join(ROOT_DIR, "images")
+IMAGE_DIR = os.path.join(ROOT_DIR, "train")
+
+
 
 
 class InferenceConfig(coco.CocoConfig):
@@ -163,25 +157,25 @@ class_names = [
 
 
 # Train Images path
-image_path = "../train_data/"
+image_path = "/home/lindsey/Documents/Git_Projects/bird_species_classification/train/"
 
 # Load Test images
-for bird_specie in species:
-    specie = join(image_path, bird_specie)
+for classification in classes:
+    cls = join(image_path, classification)
 
     files = listdir(specie)
     # Files sorting
     files.sort(key=lambda f: int("".join(filter(str.isdigit, f))))
 
-    birds = 1
+    plants = 1
 
-    if not exists(join("../mask_rcnn_crops/", bird_specie)):
-    	makedirs(join("../mask_rcnn_crops/", bird_specie))
+    if not exists(join("/home/lindsey/Documents/Git_Projects/bird_species_classification/mask_rcnn_crops/", classification)):
+    	makedirs(join("/home/lindsey/Documents/Git_Projects/bird_species_classification/mask_rcnn_crops/", classification))
     	
     # Detect birds in each class
     for file in files:
 
-        img_path = join(specie, file)
+        img_path = join(cls, file)
 
         image = cv2.imread(img_path, 1)
 
@@ -195,8 +189,8 @@ for bird_specie in species:
 
         for j in range(number_of_rois):
 
-            # If bird is found append then crop the bird out of that image
-            if res["class_ids"][j] == 15:
+            # If potted plant or broccoli is found append then crop the plant/broccoli out of that image
+            if res["class_ids"][j] == 51 or res["class_ids"][j] == 59:
 
                 y1, x1, y2, x2 = res["rois"][j]
 
@@ -204,9 +198,9 @@ for bird_specie in species:
 
                 cv2.imwrite(
                     "../mask_rcnn_crops/"
-                    + bird_specie
+                    + classification
                     + "/"
-                    + str(birds)
+                    + str(plants)
                     + str(imgs)
                     + ".jpg",
                     crop,
@@ -214,4 +208,4 @@ for bird_specie in species:
 
                 imgs += 1
 
-        birds += 1
+        plants += 1

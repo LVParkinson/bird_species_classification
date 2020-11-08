@@ -1,0 +1,7 @@
+train
+*.npy
+*.h5
+*.jpeg
+*.jpg
+*.png
+*.gif

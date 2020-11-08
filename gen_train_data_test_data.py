@@ -4,27 +4,17 @@ from os.path import join
 from os import listdir
 from keras.utils import np_utils
 
-species = [
-    "blasti",
-    "bonegl",
-    "brhkyt",
-    "cbrtsh",
-    "cmnmyn",
-    "gretit",
-    "hilpig",
-    "himbul",
-    "himgri",
-    "hsparo",
-    "indvul",
-    "jglowl",
-    "lbicrw",
-    "mgprob",
-    "rebimg",
-    "wcrsrt",
+#bird_specie -> classification
+
+classes = [
+    "fruit",
+    "flower",
+    "both",
+    "ambiguous",
 ]
 
-datapath = "./"
-N_CLASSES = 16  # Number of classes
+datapath = "/home/lindsey/Documents/Git_Projects/bird_species_classification/"
+N_CLASSES = 4  # Number of classes
 
 
 def gen_data():
@@ -38,12 +28,12 @@ def gen_data():
     X_test = []
     Y_test = []
     count = 0
-    for bird_specie in species:
+    for classification in classes:
 
         # Samples Location
-        train_data = join(datapath, "train/" + bird_specie)
-        val_data = join(datapath, "valid/" + bird_specie)
-        test_data = join(datapath, "test/" + bird_specie)
+        train_data = join(datapath, "train/" + classification)
+        val_data = join(datapath, "validation/" + classification)
+        test_data = join(datapath, "test/" + classification)
 
         # Samples Files
         train_files = listdir(train_data)

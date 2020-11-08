@@ -1,7 +1,10 @@
 import cv2
 from os.path import join
 import os
+import imgaug as ia
 from imgaug import augmenters as iaa
+
+ia.seed(5)
 
 augmented_image_dir = "/home/lindsey/Documents/Git_Projects/bird_species_classification/train/"
 
@@ -10,7 +13,7 @@ augmented_image_dir = "/home/lindsey/Documents/Git_Projects/bird_species_classif
 #bird_specie_number -> classification_number
 
 classes = [
-    "fruit",
+    #"fruit",
     "flower",
     "both",
     "ambiguous",
@@ -109,11 +112,25 @@ def save_images(
 
 # Dataset Augmentation
 
-gauss = iaa.AdditiveGaussianNoise(scale=0.2 * 255)
+gauss = iaa.Sequential([
+    iaa.AdditiveGaussianNoise(scale=0.2 * 255),
+    iaa.CropAndPad(percent=(-0.2, 0.2), pad_mode="edge"),
+    iaa.AddToHueAndSaturation((-60, 60)),
+    iaa.Sharpen(alpha=(0, 0.3), lightness=(0.7, 1.3)),
+    iaa.Affine(rotate=(-25, 25)),
+    iaa.Fliplr(1.0)
+], random_order=True)
+    
+    
 # blur = iaa.GaussianBlur(sigma=(3.0))
 # flip = iaa.Fliplr(1.0)
 # contrast = iaa.ContrastNormalization((0.5, 1.5), per_channel=0.5)
-sharp = iaa.Sharpen(alpha=(0, 0.3), lightness=(0.7, 1.3))
+sharp = iaa.Sequential([
+    iaa.Sharpen(alpha=(0, 0.3), lightness=(0.7, 1.3)),
+    iaa.Affine(rotate=(-25, 25)),
+    iaa.Fliplr(1.0)
+], random_order = True)
+
 affine = iaa.Affine(translate_px={"x": (-50, 50), "y": (-50, 50)})
 # add = iaa.Add((-20, 20), per_channel=0.5)
 # multiply  = iaa.Multiply((0.8, 1.2), per_channel=0.5)
@@ -135,22 +152,17 @@ aug = iaa.Sequential(
     ]
 )
 
-
-def main():
-    """Read images, apply augmentation and save images.
-    Two types of image augmentation is applied. One is on normal
-    image whose image name starts with 1 nad another is one flipped
-    image which starts with 4. Bird classes are mentioned above which
-    type of augmentation is applied on which type of image and which
-    type of specie. We check the first value of image path
-    and compare it 1/4 to apply the data augmentation accordingly.
-    """
+def main ():
     for classification in classes:
         augmented_image_folder = join(augmented_image_dir, classification)
         source_images = os.listdir(augmented_image_folder)
         print(source_images)
         source_images.sort(key=lambda f: int("".join(filter(str.isdigit, f))))
 
+        
+        file_count = sum(len(files) for _, _, 
+            files in os.walk(augmented_image_folder))
+        
         augmented_images_arr = []
         img_number = []
         classification_number = source_images[0]
@@ -160,38 +172,22 @@ def main():
             if int(source_image[0]) == 1:
                 img_number.append(source_image[4:6])
                 img_path = join(augmented_image_folder, source_image)
-
                 img = cv2.imread(img_path)
                 augmented_images_arr.append(img)
-
-        gauss_counter = 0
-        sharp_counter = 0
-        if len(augmented_images_arr) < 9:
+                
+        counter = 0
+        if len(os.listdir(augmented_image_folder)) < 80:
             # Applying Gaussian image augmentation
-            for augmented_image in gauss.augment_images(augmented_images_arr):
-                save_images(
-                    augmented_image,
-                    augmented_image_folder,
-                    img_number[gauss_counter],
-                    classification_number,
-                    20,
-                )
-                gauss_counter += 1
-            
-            
-            
-            
-            
             for augmented_image in sharp.augment_images(augmented_images_arr):
                 save_images(
                     augmented_image,
                     augmented_image_folder,
-                    img_number[sharp_counter],
+                    img_number[counter],
                     classification_number,
-                    30,
+                    51,
                 )
-                sharp_counter += 1
-
+                counter += 1
+        
 
 if __name__ == "__main__":
     main()

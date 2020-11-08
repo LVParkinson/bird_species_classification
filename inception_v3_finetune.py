@@ -17,7 +17,7 @@ from keras.applications.inception_v3 import InceptionV3
 
 BATCH_SIZE = 32
 VALIDATION_SPLIT = 0.1
-N_CLASSES = 16
+N_CLASSES = 4
 EPOCHS = 7
 
 
@@ -85,7 +85,7 @@ def f1(y_true, y_pred):
 # Inecption_V3 model define
 def build_inceptionV3(
     img_shape=(416, 416, 3),
-    n_classes=16,
+    n_classes=4,
     l2_reg=0.0,
     load_pretrained=True,
     freeze_layers_from="base_model",
@@ -157,15 +157,15 @@ if __name__ == "__main__":
     # y_train_crop = np.load('Y_train_crop.npy')
     # y_train_crop = np_utils.to_categorical(y_train, N_CLASSES)
 
-    # Loading Original Images for training resized to 416x416
-    # x_train_original = np.load('X_train.npy')
-    # y_train_original = np.load('Y_train.npy')
-    # x_valid          = np.load('X_valid.npy')
-    # y_valid          = np.load('Y_valid.npy')
+     #Loading Original Images for training resized to 416x416
+    x_train_original = np.load('X_train.npy')
+    y_train_original = np.load('Y_train.npy')
+    x_valid          = np.load('X_valid.npy')
+    y_valid          = np.load('Y_valid.npy')
 
     # Loading Original Images for Testing resized to 416x416
-    x_test = np.load("X_test.npy")
-    y_test = np.load("Y_test_categorical.npy")
+    #x_test = np.load("X_test.npy")
+    #y_test = np.load("Y_test_categorical.npy")
 
     # print(x_train.shape, y_train.shape)
 
@@ -176,20 +176,20 @@ if __name__ == "__main__":
     model = build_inceptionV3()
 
     # Loading Trained weights
-    model.load_weights("inception_v3_crops+images.h5")
+    # model.load_weights("inception_v3_crops+images.h5")
 
     # Model Fitting
-    # history = model.fit(x_train_original, y_train_original,
-    #       batch_size=BATCH_SIZE,
-    #       epochs=EPOCHS,
-    #       verbose= 1,
-    #     # steps_per_epoch=x_train.shape[0]//BATCH_SIZE,
-    #     callbacks = [lrate],
-    #     validation_data=(x_valid, y_valid)
-    #     )
+    history = model.fit(x_train_original, y_train_original,
+          batch_size=BATCH_SIZE,
+          epochs=EPOCHS,
+          verbose= 1,
+          steps_per_epoch=x_train_original.shape[0]//BATCH_SIZE,
+          callbacks = [lrate],
+          validation_data=(x_valid, y_valid)
+          )
 
     # Save model weights
-    # model.save_weights('inception_v3_crops+images.h5')
+    model.save_weights('inception_v3_crops+images.h5')
 
     # Calculate score over test data
     score = model.evaluate(x_test, y_test, verbose=1, batch_size=BATCH_SIZE)
