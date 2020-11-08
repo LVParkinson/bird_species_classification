@@ -171,7 +171,7 @@ if __name__ == "__main__":
     x_test = np.load("X_test.npy")
     y_test = np.load("Y_test.npy")
 
-    # print(x_train.shape, y_train.shape)
+    print(x_train.shape, y_train.shape)
 
     # Learning Rate Schedule
     lrate = LearningRateScheduler(step_decay)
@@ -180,7 +180,7 @@ if __name__ == "__main__":
     model = build_inception_resnet_V2()
 
     # Loading Trained weights
-    #model.load_weights("inception_resnet_v2_images+crops.h5")
+    model.load_weights("inception_resnet_original.h5")
 
     # Model Fitting with 10% of the images used for Validation purpose
     history = model.fit(x_train, y_train,
@@ -193,7 +193,7 @@ if __name__ == "__main__":
            )
 
     # Save Model Weights
-    model.save_weights('inception_resnet_crops.h5')
+    model.save_weights('inception_resnet_original2.h5')
 
     # Calculate score over test data
     score = model.evaluate(x_test, y_test, verbose=1, batch_size=BATCH_SIZE)
